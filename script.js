@@ -381,4 +381,65 @@ document.addEventListener('mousedown', function() {
     document.body.classList.remove('keyboard-navigation');
 });
 
+// Waitlist Form Functionality
+document.getElementById('waitlistForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const responseDiv = document.getElementById('responseMessage');
+    const submitBtn = this.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+    submitBtn.disabled = true;
+    
+    // Clear previous response
+    responseDiv.innerHTML = '';
+    responseDiv.style.display = 'none';
+    
+    try {
+        const response = await fetch('/join', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            responseDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    ${result.message}
+                </div>
+            `;
+            this.reset(); // Clear the form
+        } else {
+            responseDiv.innerHTML = `
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    ${result.message || 'An error occurred. Please try again.'}
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Waitlist submission error:', error);
+        responseDiv.innerHTML = `
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                Unable to join waitlist. Please check your connection and try again.
+            </div>
+        `;
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        responseDiv.style.display = 'block';
+    }
+});
+
 console.log('SPAMKLR Enhanced JavaScript loaded successfully!');

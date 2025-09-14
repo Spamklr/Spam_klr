@@ -663,6 +663,31 @@ img {
     display: block;
 }
 
+/* Alert styles for waitlist form */
+.alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #10B981, #34D399);
+    color: white;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #EF4444, #F87171);
+    color: white;
+}
+
+.alert i {
+    font-size: 18px;
+}
+
 /* Features Section */
 .features {
     padding: var(--spacing-24) 0;
