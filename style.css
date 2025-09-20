@@ -81,7 +81,7 @@
 
 html {
     scroll-behavior: smooth;
-    font-size: 16px;
+    font-size: 11px;
 }
 
 body {
@@ -2816,3 +2816,4 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--gray-500);
 }
+

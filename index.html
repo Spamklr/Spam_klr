@@ -41,7 +41,8 @@
                 <span>AI-Powered Protection</span>
             </div>
             <h1>Stop Spam Calls Before They Ring</h1>
-            <p class="hero-description">Experience the next generation of call protection with SPAMKLR's advanced AI technology. Real-time detection, instant blocking, and complete peace of mind.</p>
+            <!-- <p class="hero-description">Experience the next generation of call protection with SPAMKLR's advanced AI technology. Real-time detection, instant blocking, and complete peace of mind.</p> -->
+            <p class="hero-description">Experience the next generation of call protection with SPAMKLR's on-device AI. Real-time speech-to-text and NLP detect fraud attempts instantly — all while keeping your conversations private.</p>
             <div class="hero-buttons">
                 <a href="#waitlist" class="btn-primary">
                     <i class="fas fa-rocket"></i>
@@ -58,7 +59,7 @@
                     <div class="stat-label">Detection Rate</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number">< 1s</div>
+                    <div class="stat-number"> 1s</div>
                     <div class="stat-label">Response Time</div>
                 </div>
                 <div class="stat">
@@ -102,7 +103,8 @@
                     <i class="fas fa-brain"></i>
                 </div>
                 <h3>AI-Powered Detection</h3>
-                <p>Advanced machine learning algorithms analyze call patterns and voice characteristics in real-time to identify threats instantly.</p>
+                <!-- <p>Advanced machine learning algorithms analyze call patterns and voice characteristics in real-time to identify threats instantly.</p> -->
+                <p>On-device AI converts speech to text and analyzes conversations in real-time to detect scams such as OTP or password requests.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
@@ -116,14 +118,16 @@
                     <i class="fas fa-shield-virus"></i>
                 </div>
                 <h3>Complete Privacy</h3>
-                <p>End-to-end encryption and local processing ensure your calls remain private while maintaining maximum protection.</p>
+                <!-- <p>End-to-end encryption and local processing ensure your calls remain private while maintaining maximum protection.</p> -->
+                <p>On-device processing and end-to-end encryption ensure no call audio leaves your device, meeting GDPR and Qatar PDPPL standards.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-mobile-alt"></i>
                 </div>
                 <h3>Cross-Platform</h3>
-                <p>Seamless protection across all your devices with native iOS and Android applications.</p>
+                <!-- <p>Seamless protection across all your devices with native iOS and Android applications.</p> -->
+                <p>Native Android protection (with future iOS support) designed to seamlessly secure your calls.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">
@@ -157,8 +161,10 @@
                     <div class="step-icon">
                         <i class="fas fa-search"></i>
                     </div>
-                    <h3>Intelligent Detection</h3>
-                    <p>Our AI system analyzes incoming calls using advanced pattern recognition, voice analysis, and real-time threat intelligence to identify potential spam calls instantly.</p>
+                    <!-- <h3>Intelligent Detection</h3>
+                    <p>Our AI system analyzes incoming calls using advanced pattern recognition, voice analysis, and real-time threat intelligence to identify potential spam calls instantly.</p> -->
+                    <h3>Language Detection & Call Interception</h3>
+                    <p>Incoming unknown calls are intercepted, and the system detects language on-device before analysis begins.</p>
                 </div>
             </div>
             <div class="process-step">
@@ -167,8 +173,10 @@
                     <div class="step-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
-                    <h3>Smart Analysis</h3>
-                    <p>Multiple AI models work together to evaluate call authenticity, cross-referencing against known spam databases and analyzing behavioral patterns in milliseconds.</p>
+                    <!-- <h3>Smart Analysis</h3>
+                    <p>Multiple AI models work together to evaluate call authenticity, cross-referencing against known spam databases and analyzing behavioral patterns in milliseconds.</p> -->
+                    <h3>Speech-to-Text & NLP Analysis</h3>
+                    <p>The call is transcribed in real-time and analyzed with NLP to flag requests for sensitive info like OTPs, passwords, or bank details.</p>
                 </div>
             </div>
             <div class="process-step">
@@ -177,8 +185,10 @@
                     <div class="step-icon">
                         <i class="fas fa-ban"></i>
                     </div>
-                    <h3>Automatic Protection</h3>
-                    <p>Confirmed spam calls are automatically blocked and logged, while you receive instant notifications about the threats that were prevented.</p>
+                    <!-- <h3>Automatic Protection</h3>
+                    <p>Confirmed spam calls are automatically blocked and logged, while you receive instant notifications about the threats that were prevented.</p> -->
+                    <h3>User Protection</h3>
+                    <p>If fraud is detected, SPAMKLR alerts you immediately and can automatically end the call while logging it securely.</p>
                 </div>
             </div>
         </div>
@@ -210,11 +220,11 @@
             <div class="waitlist-form">
                 <form id="waitlistForm">
                     <div class="form-group">
-                        <input type="text" id="name" placeholder="Your Name" required>
+                        <input type="text" id="name" placeholder="   Your Name" required>
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" placeholder="Your Email" required>
+                        <input type="email" id="email" placeholder="    Your Email" required>
                         <i class="fas fa-envelope"></i>
                     </div>
                     <button type="submit" class="submit-btn">
@@ -615,6 +625,10 @@ console.log(result.isSpam); // true/false</code></pre>
                         <li>App version and settings</li>
                         <li>IP address and location data</li>
                     </ul>
+                    <h4>Identity Verification</h4>
+                    <ul>
+                        <li>Qatari ID or equivalent (encrypted or tokenized, never stored in plain form)</li>
+                    </ul>
                 </section>
                 <section id="privacy-use" class="legal-section-content">
                     <h3>How We Use Your Information</h3>
@@ -624,6 +638,8 @@ console.log(result.isSpam); // true/false</code></pre>
                         <li>Analyze calling patterns to identify spam</li>
                         <li>Customize your experience</li>
                         <li>Ensure security and prevent fraud</li>
+                        <li>Verify your identity securely without storing raw ID data</li>
+                        <li>Comply with GDPR, ISO, and Qatar PDPPL requirements</li>
                     </ul>
                 </section>
                 <section id="privacy-sharing" class="legal-section-content">
@@ -644,6 +660,7 @@ console.log(result.isSpam); // true/false</code></pre>
                         <li>Regular security audits</li>
                         <li>Access controls and monitoring</li>
                         <li>Secure data centers</li>
+                        <li>On-device AI ensures no call audio is uploaded or stored externally</li>
                     </ul>
                 </section>
                 <section id="privacy-rights" class="legal-section-content">
@@ -699,6 +716,9 @@ console.log(result.isSpam); // true/false</code></pre>
                         <li>Automatic call blocking</li>
                         <li>Custom blocklist management</li>
                         <li>Detailed call analytics</li>
+                        <li>On-device speech-to-text and NLP analysis of incoming calls</li>
+                        <li>User consent management and privacy controls</li>
+                        <li>Encrypted cloud backup (optional, with user authorization)</li>
                     </ul>
                 </section>
                 <section id="terms-use" class="legal-section-content">
