@@ -9,13 +9,18 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+<!-- Banner Image -->
+<div class="banner">
+    <img src="banner2.png" alt="SPAMKLR Banner">
+</div>
+
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <div class="nav-logo">
+        <!-- <div class="nav-logo">
             <img src="Logo1.jpg" alt="SPAMKLR Logo" class="logo-image">
             <span class="logo-text">SPAMKLR</span>
-        </div>
+        </div> -->
         <div class="nav-menu">
             <a href="#home" class="nav-link">Home</a>
             <a href="#features" class="nav-link">Features</a>
@@ -59,7 +64,7 @@
                     <div class="stat-label">Detection Rate</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number"> 1s</div>
+                    <div class="stat-number">1s</div>
                     <div class="stat-label">Response Time</div>
                 </div>
                 <div class="stat">
@@ -452,7 +457,7 @@
 </section>
 
 <!-- Documentation Section -->
-<section id="docs" class="docs-section">
+<!-- <section id="docs" class="docs-section">
     <div class="container">
         <div class="section-header">
             <h2>Documentation</h2>
@@ -587,10 +592,10 @@ console.log(result.isSpam); // true/false</code></pre>
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <!-- Privacy Policy Section -->
-<section id="privacy" class="legal-section privacy-section">
+<!-- <section id="privacy" class="legal-section privacy-section">
     <div class="container">
         <div class="legal-header">
             <h2>Privacy Policy</h2>
@@ -683,7 +688,7 @@ console.log(result.isSpam); // true/false</code></pre>
             </div>
         </div>
     </div>
-</section>
+</section> -->
 
 <!-- Terms of Service Section -->
 <section id="terms" class="legal-section terms-section">
@@ -959,6 +964,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 behavior: 'smooth',
                 block: 'start'
             });
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const stats = document.querySelectorAll('.stat-number');
+    stats.forEach(stat => {
+        // Remove all non-digit and non-decimal characters
+        let numericValue = parseFloat(stat.textContent.replace(/[^0-9.]/g, ''));
+        if (!isNaN(numericValue)) {
+            stat.textContent = numericValue; // Optionally add % or s back
         }
     });
 });
