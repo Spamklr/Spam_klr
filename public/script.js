@@ -442,4 +442,24 @@ document.getElementById('waitlistForm').addEventListener('submit', async functio
     }
 });
 
+let lastScrollTop = 0;
+const navbar = document.querySelector('.navbar');
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (currentScroll > lastScrollTop) {
+    // Scrolling down → hide navbar
+    navbar.classList.add('hidden');
+  } else {
+    // Scrolling up → show navbar
+    navbar.classList.remove('hidden');
+  }
+
+  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // prevent negative scroll
+});
+
+
+
+
 console.log('SPAMKLR Enhanced JavaScript loaded successfully!');

@@ -2836,9 +2836,68 @@ html {
 }
 
 .navbar {
-    position: sticky;
+    position: fixed;   /* fixed instead of sticky */
     top: 0;
+    left: 0;
     width: 100%;
     z-index: 1000;
+    background: linear-gradient(270deg, #3b82f6, #1e3a8a, #0f172a) !important; 
+    /* optional shadow for depth */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease-in-out; /* smooth slide */
+}
+/* Navbar container */
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* logo on left, menu on right */
+  padding: 0 40px;
+  height: 50px; /* taller navbar for big logo */
 }
 
+/* Logo */
+.nav-logo img.logo-img {
+  height: 100px;  /* 🔥 very big logo */
+  width: auto;
+  display: block;
+}
+
+/* Menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* spacing between menu links */
+}
+
+/* Nav links */
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem; /* slightly larger text */
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #4da6ff;
+}
+
+/* CTA button */
+.cta-button {
+  padding: 12px 24px;
+  background: #3b82f6;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.cta-button:hover {
+  background: #2563eb;
+}
+
+/* Hidden (slide up) */
+.navbar .hidden {
+  transform: translateY(-100%);
+}
