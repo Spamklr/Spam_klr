@@ -1171,7 +1171,7 @@ img {
 .contact-info p {
     font-size: var(--font-size-lg);
     color: var(--gray-600);
-    margin-bottom: var(--spacing-8);
+    /* margin-bottom: var(--spacing-8); */
 }
 
 .contact-card {
@@ -2841,28 +2841,27 @@ html {
 }
 
 .navbar {
-    position: fixed;   /* fixed instead of sticky */
+    position: fixed;   /* always stays at the top */
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
     background: linear-gradient(270deg, #3b82f6, #1e3a8a, #0f172a) !important; 
-    /* optional shadow for depth */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    transition: transform 0.3s ease-in-out; /* smooth slide */
 }
+
 /* Navbar container */
 .nav-container {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* logo on left, menu on right */
+  justify-content: space-between;
   padding: 0 40px;
-  height: 50px; /* taller navbar for big logo */
+  height: 50px;
 }
 
 /* Logo */
 .nav-logo img.logo-img {
-  height: 100px;  /* 🔥 very big logo */
+  height: 100px;
   width: auto;
   display: block;
 }
@@ -2871,7 +2870,7 @@ html {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 30px; /* spacing between menu links */
+  gap: 30px;
 }
 
 /* Nav links */
@@ -2879,7 +2878,7 @@ html {
   color: #fff;
   text-decoration: none;
   font-weight: 600;
-  font-size: 1.1rem; /* slightly larger text */
+  font-size: 1.1rem;
   transition: color 0.2s ease;
 }
 
@@ -2902,7 +2901,21 @@ html {
   background: #2563eb;
 }
 
-/* Hidden (slide up) */
-.navbar .hidden {
-  transform: translateY(-100%);
+/* === Override: make Features & Contact headings match Waitlist gradient === */
+.features .section-header h2,
+.contact-section .section-header h2 {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-blue) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent !important;
+  font-weight: 800;
+  margin-bottom: var(--spacing-6);
+}
+
+/* Ensure waitlist h2 remains same (safety) */
+.waitlist-text h2 {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-blue) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent !important;
 }

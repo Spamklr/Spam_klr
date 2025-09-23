@@ -499,26 +499,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // -----------------------
-// Navbar hide on scroll
-// -----------------------
-let lastScrollTop = 0;
-const navbar = document.querySelector(".navbar");
-
-window.addEventListener("scroll", () => {
-  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-  if (currentScroll > lastScrollTop) {
-    // Down → hide
-    navbar.classList.add("hidden");
-  } else {
-    // Up → show
-    navbar.classList.remove("hidden");
-  }
-
-  lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
-});
-
-// -----------------------
 // Smooth scroll for links
 // -----------------------
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -684,3 +664,4 @@ if (waitlistForm) {
 }
 
 console.log("✅ SPAMKLR Enhanced JavaScript loaded successfully!");
+
