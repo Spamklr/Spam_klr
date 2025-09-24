@@ -256,6 +256,7 @@ img {
     color: var(--white);
     position: relative;
     overflow: hidden;
+    padding: 0 5%;
 }
 
 .hero::before {
@@ -271,13 +272,21 @@ img {
         radial-gradient(circle at 40% 40%, rgba(147, 197, 253, 0.2) 0%, transparent 50%);
 }
 
-.hero-content {
+.hero .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap; /* stacks on smaller screens */
     position: relative;
     z-index: 2;
-    text-align: center;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--spacing-20) 0;
+    width: 100%;
+}
+
+.hero-content {
+    flex: 1 1 500px;
+    max-width: 600px;
+    text-align: left;
 }
 
 .hero-badge {
@@ -297,7 +306,7 @@ img {
 
 .hero-stats {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: var(--spacing-10);
     margin-top: var(--spacing-12);
     flex-wrap: wrap;
@@ -327,22 +336,6 @@ img {
     font-weight: 500;
 }
 
-.hero-visual {
-    display: none; /* Hide for now, can be added later */
-}
-
-.phone-mockup,
-.phone-screen,
-.call-interface,
-.caller-info,
-.spam-badge,
-.caller-name,
-.caller-number,
-.call-actions,
-.action-blocked {
-    display: none; /* Hide phone mockup elements for cleaner design */
-}
-
 .hero h1 {
     font-size: var(--font-size-6xl);
     font-weight: 900;
@@ -366,9 +359,106 @@ img {
 .hero-buttons {
     display: flex;
     gap: var(--spacing-6);
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--accent-blue) 100%);
+    color: var(--white);
+    padding: var(--spacing-5) var(--spacing-10);
+    border-radius: var(--radius-2xl);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    box-shadow: 
+        0 10px 30px rgba(59, 130, 246, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 15px 40px rgba(59, 130, 246, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    padding: var(--spacing-5) var(--spacing-10);
+    border-radius: var(--radius-2xl);
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+/* Right-side image */
+.hero-visual {
+    flex: 1 1 400px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.hero-visual img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 1rem;
+    }
+    .hero .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .hero-content {
+        text-align: center;
+    }
+    .hero-buttons {
+        justify-content: center;
+    }
+    .hero-stats {
+        justify-content: center;
+    }
+    .hero-visual {
+        justify-content: center;
+        margin-top: 2rem;
+    }
 }
 
 /* Professional Buttons */
@@ -2841,7 +2931,7 @@ html {
 }
 
 .navbar {
-    position: fixed;   /* always stays at the top */
+    position: sticky;   /* always stays at the top */
     top: 0;
     left: 0;
     width: 100%;
