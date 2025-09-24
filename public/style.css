@@ -246,7 +246,7 @@ img {
 
 /* Hero Section - Stunning Dark Blue */
 .hero {
-    min-height: 100vh;
+    min-height: calc(100vh - 72.67px);
     display: flex;
     align-items: center;
     background: linear-gradient(135deg, 
@@ -432,7 +432,7 @@ img {
 }
 
 .hero-visual img {
-    max-width: 100%;
+    max-width: 50vh;
     height: auto;
     border-radius: 1rem;
 }
