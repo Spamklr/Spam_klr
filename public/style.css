@@ -249,6 +249,7 @@ img {
     min-height: calc(100vh - 72.67px);
     display: flex;
     align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, 
         var(--primary-dark) 0%, 
         var(--primary-blue) 40%, 
@@ -441,23 +442,64 @@ img {
 @media (max-width: 768px) {
     .hero {
         padding: 2rem 1rem;
+        min-height: unset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .hero .container {
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         text-align: center;
+        width: 100%;
+        max-width: 100vw;
+        padding: 0;
+        gap: 1.5rem;
     }
     .hero-content {
         text-align: center;
+        width: 100%;
+        max-width: 100vw;
+        padding: 0 1rem;
+        box-sizing: border-box;
     }
     .hero-buttons {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        width: 100%;
+        max-width: 100vw;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+        font-size: var(--font-size-base);
+        padding: var(--spacing-4) var(--spacing-6);
     }
     .hero-stats {
         justify-content: center;
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
     .hero-visual {
         justify-content: center;
+        align-items: center;
         margin-top: 2rem;
+        width: 100%;
+        max-width: 100vw;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+    .hero-visual img {
+        max-width: 90vw;
+        height: auto;
+        margin: 0 auto;
+        display: block;
     }
 }
 
@@ -2377,7 +2419,7 @@ img {
         #1E293B 50%, 
         var(--primary-dark) 100%);
     color: var(--white);
-    padding: var(--spacing-20) 0 var(--spacing-6);
+    padding: var(--spacing-8) 0 var(--spacing-6);
     position: relative;
     overflow: hidden;
 }
@@ -3009,3 +3051,4 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent !important;
 }
+
