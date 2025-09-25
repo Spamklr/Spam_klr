@@ -77,17 +77,38 @@ app.use(hpp());
 // CORS
 const corsOptions = {
   origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
     const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:8000', 'http://localhost:5000'];
-    if (!origin || allowedOrigins.includes(origin)) {
+      : [
+          'http://localhost:3000',
+          'http://localhost:5000',
+          'http://localhost:8000',
+          'http://127.0.0.1:3000',
+          'http://127.0.0.1:5000',
+          'http://127.0.0.1:8000'
+        ];
+    
+    // In development, allow all localhost and 127.0.0.1 origins
+    if (process.env.NODE_ENV !== 'production') {
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+    }
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
 
@@ -173,6 +194,9 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
+
+// Handle preflight requests for /join
+app.options('/join', cors(corsOptions));
 
 // Join waitlist
 app.post('/join', signupLimiter, validateSignup, handleValidationErrors, async (req, res, next) => {
