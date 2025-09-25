@@ -88,7 +88,9 @@ const corsOptions = {
           'http://localhost:8000',
           'http://127.0.0.1:3000',
           'http://127.0.0.1:5000',
-          'http://127.0.0.1:8000'
+          'http://127.0.0.1:8000',
+          'https://spamklr.com',     // Primary domain
+          'https://www.spamklr.com'  // With www
         ];
     
     // In development, allow all localhost and 127.0.0.1 origins
