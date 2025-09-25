@@ -257,9 +257,9 @@ app.use(globalErrorHandler);
 (async () => {
   try {
     await connectDB(process.env.MONGODB_URI);
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ Connected to MongoDB`);
-      console.log(`🚀 ${process.env.APP_NAME || 'SPAMKLR'} running on http://localhost:${PORT}`);
+      console.log(`🚀 ${process.env.APP_NAME || 'SPAMKLR'} running on http://0.0.0.0:${PORT}`);
       console.log(`📁 Serving public from: ${path.join(__dirname, '..', 'public')}`);
     });
 
