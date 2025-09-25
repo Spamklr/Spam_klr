@@ -637,7 +637,7 @@ if (waitlistForm) {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        credentials: "same-origin",
+        credentials: "include",   // ✅ sends cookies + works with CORS
         body: JSON.stringify({ name, email }),
       });
 
