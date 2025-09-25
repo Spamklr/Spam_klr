@@ -107,8 +107,10 @@ app.use(session({
   }
 }));
 
-// Serve static assets
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static assets (CORRECT PATH)
+// presentation.js is in /var/www/spamklr.com/html/presentation
+// public folder is at /var/www/spamklr.com/html/public
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Route-level signup limiter
 const signupLimiter = rateLimit({
