@@ -74,12 +74,11 @@ app.use((req, res, next) => {
 // Prevent HTTP param pollution
 app.use(hpp());
 
-// CORS
+// ✅ Global CORS
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
+    if (!origin) return callback(null, true); // allow curl/postman/mobile apps
+
     const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',')
       : [
@@ -89,17 +88,16 @@ const corsOptions = {
           'http://127.0.0.1:3000',
           'http://127.0.0.1:5000',
           'http://127.0.0.1:8000',
-          'https://spamklr.com',     // Primary domain
-          'https://www.spamklr.com'  // With www
+          'https://spamklr.com',
+          'https://www.spamklr.com'
         ];
-    
-    // In development, allow all localhost and 127.0.0.1 origins
+
     if (process.env.NODE_ENV !== 'production') {
       if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
         return callback(null, true);
       }
     }
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -130,9 +128,7 @@ app.use(session({
   }
 }));
 
-// Serve static assets (CORRECT PATH)
-// presentation.js is in /var/www/spamklr.com/html/presentation
-// public folder is at /var/www/spamklr.com/html/public
+// Serve static assets
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Route-level signup limiter
@@ -196,9 +192,6 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
-
-// Handle preflight requests for /join
-app.options('/join', cors(corsOptions));
 
 // Join waitlist
 app.post('/join', signupLimiter, validateSignup, handleValidationErrors, async (req, res, next) => {
@@ -276,7 +269,9 @@ function globalErrorHandler(err, req, res, next) {
   }
   res.status(500).json({
     error: 'Server Error',
-    message: process.env.NODE_ENV === 'production' ? 'Something went wrong. Please try again.' : err.message
+    message: process.env.NODE_ENV === 'production'
+      ? 'Something went wrong. Please try again.'
+      : err.message
   });
 }
 app.use(globalErrorHandler);
