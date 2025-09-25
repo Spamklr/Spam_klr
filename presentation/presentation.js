@@ -108,7 +108,6 @@ app.use(session({
 }));
 
 // Serve static assets
-const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route-level signup limiter
