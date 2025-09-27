@@ -14,6 +14,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const { body, validationResult } = require('express-validator');
 const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
 
 const { connectDB } = require('../persistence/persistence');
 const { addToWaitlist, getWaitlistStats, addContactSubmission, BusinessError } = require('../business/business');
@@ -47,26 +48,16 @@ app.use(helmet({
   }
 }));
 
-// General rate limiter (disabled for development)
+// General rate limiter
 const generalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' 
-    ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100
-    : 1000, // Much higher limit for development
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
   message: {
     error: "Too many requests from this IP, please try again later.",
     retryAfter: "15 minutes"
   },
   standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting for localhost in development
-    if (process.env.NODE_ENV !== 'production') {
-      const ip = req.ip || req.connection?.remoteAddress || '';
-      return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
-    }
-    return false;
-  }
+  legacyHeaders: false
 });
 app.use(generalLimiter);
 
@@ -92,27 +83,15 @@ const corsOptions = {
     const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',')
       : [
-          'http://localhost:3000',
-          'http://localhost:5000',
-          'http://localhost:8000',
-          'http://127.0.0.1:3000',
-          'http://127.0.0.1:5000',
-          'http://127.0.0.1:8000',
           'https://spamklr.com',
           'https://www.spamklr.com'
         ];
-
-    if (process.env.NODE_ENV !== 'production') {
-      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-        return callback(null, true);
-      }
-    }
 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.warn(`CORS blocked origin: ${origin}`);
-      return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -141,26 +120,16 @@ app.use(session({
 // Serve static assets
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Route-level signup limiter (relaxed for development)
+// Route-level signup limiter
 const signupLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' 
-    ? parseInt(process.env.RATE_LIMIT_MAX_SIGNUP_REQUESTS, 10) || 5
-    : 100, // Much higher limit for development testing
+  max: parseInt(process.env.RATE_LIMIT_MAX_SIGNUP_REQUESTS, 10) || 5,
   message: {
     error: "Too many signup attempts, please try again later.",
     retryAfter: "15 minutes"
   },
   standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting for localhost in development
-    if (process.env.NODE_ENV !== 'production') {
-      const ip = req.ip || req.connection?.remoteAddress || '';
-      return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
-    }
-    return false;
-  }
+  legacyHeaders: false
 });
 
 // Validation middleware for signup
@@ -467,7 +436,7 @@ function validateEnvironment() {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ ${process.env.APP_NAME || 'SPAMKLR'} running on http://0.0.0.0:${PORT}`);
       console.log(`📁 Serving public from: ${path.join(__dirname, '..', 'public')}`);
-      console.log(`🌐 CORS allowed origins: ${process.env.ALLOWED_ORIGINS || 'localhost:5000,localhost:8000'}`);
+      console.log(`🌐 CORS allowed origins: ${process.env.ALLOWED_ORIGINS || 'https://spamklr.com,https://www.spamklr.com'}`);
     });
 
     async function gracefulShutdown(signal) {
