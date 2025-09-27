@@ -39,6 +39,57 @@ WaitlistSchema.index({ ipAddress: 1 });
 
 const Waitlist = mongoose.models.Waitlist || mongoose.model('Waitlist', WaitlistSchema);
 
+// Contact form schema
+const ContactSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+    minlength: [2, 'Name must be at least 2 characters'],
+    maxlength: [50, 'Name must be less than 50 characters']
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    trim: true,
+    lowercase: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
+  },
+  subject: {
+    type: String,
+    required: [true, 'Subject is required'],
+    trim: true,
+    maxlength: [100, 'Subject must be less than 100 characters']
+  },
+  message: {
+    type: String,
+    required: [true, 'Message is required'],
+    trim: true,
+    minlength: [10, 'Message must be at least 10 characters'],
+    maxlength: [1000, 'Message must be less than 1000 characters']
+  },
+  ipAddress: {
+    type: String,
+    required: true
+  },
+  userAgent: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['new', 'read', 'replied'],
+    default: 'new'
+  }
+}, {
+  timestamps: true
+});
+
+ContactSchema.index({ createdAt: -1 });
+ContactSchema.index({ status: 1 });
+
+const Contact = mongoose.models.Contact || mongoose.model('Contact', ContactSchema);
+
 /**
  * Connect to MongoDB using provided URI.
  */
@@ -107,11 +158,38 @@ async function getStats() {
   return { total, recent };
 }
 
+/**
+ * Insert a new contact form entry.
+ */
+async function insertContactEntry({ name, email, subject, message, ipAddress, userAgent }) {
+  const entry = new Contact({
+    name,
+    email,
+    subject,
+    message,
+    ipAddress,
+    userAgent
+  });
+  return entry.save();
+}
+
+/**
+ * Count contact entries from a specific IP within the last `sinceMs` milliseconds.
+ */
+async function countContactsByIP(ipAddress, sinceMs = 24 * 60 * 60 * 1000) {
+  return Contact.countDocuments({
+    ipAddress,
+    createdAt: { $gte: new Date(Date.now() - sinceMs) }
+  });
+}
+
 module.exports = {
   connectDB,
   insertWaitlistEntry,
   countWaitlist,
   countRecentByIP,
   findByEmail,
-  getStats
+  getStats,
+  insertContactEntry,
+  countContactsByIP
 };

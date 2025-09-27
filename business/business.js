@@ -6,7 +6,9 @@ const {
   countWaitlist,
   countRecentByIP,
   findByEmail,
-  getStats
+  getStats,
+  insertContactEntry,
+  countContactsByIP
 } = require('../persistence/persistence');
 
 class BusinessError extends Error {
@@ -78,4 +80,45 @@ async function getWaitlistStats() {
   };
 }
 
-module.exports = { addToWaitlist, getWaitlistStats, BusinessError };
+/**
+ * Add a contact form submission with business rules:
+ * - Input validation
+ * - per-IP rate limiting
+ */
+async function addContactSubmission({ name, email, subject, message, ipAddress = 'unknown', userAgent = 'unknown' }) {
+  if (!name || String(name).trim().length < 2) {
+    throw new BusinessError('Name must be at least 2 characters', 'INVALID_NAME');
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new BusinessError('Please enter a valid email address', 'INVALID_EMAIL');
+  }
+  if (!subject || String(subject).trim().length < 3) {
+    throw new BusinessError('Subject must be at least 3 characters', 'INVALID_SUBJECT');
+  }
+  if (!message || String(message).trim().length < 10) {
+    throw new BusinessError('Message must be at least 10 characters', 'INVALID_MESSAGE');
+  }
+
+  // per-IP throttle for contact form (default 5 per 24h)
+  const ipLimit = parseInt(process.env.MAX_CONTACTS_PER_IP_24H, 10) || 5;
+  const recentFromIP = await countContactsByIP(ipAddress);
+  if (recentFromIP >= ipLimit) {
+    throw new BusinessError('Too many contact submissions from your location. Please try again tomorrow.', 'IP_RATE_LIMIT');
+  }
+
+  try {
+    const entry = await insertContactEntry({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      subject: subject.trim(),
+      message: message.trim(),
+      ipAddress,
+      userAgent
+    });
+    return { entry };
+  } catch (err) {
+    throw err;
+  }
+}
+
+module.exports = { addToWaitlist, getWaitlistStats, addContactSubmission, BusinessError };

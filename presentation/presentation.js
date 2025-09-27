@@ -16,7 +16,7 @@ const { body, validationResult } = require('express-validator');
 const exphbs = require('express-handlebars');
 
 const { connectDB } = require('../persistence/persistence');
-const { addToWaitlist, getWaitlistStats, BusinessError } = require('../business/business');
+const { addToWaitlist, getWaitlistStats, addContactSubmission, BusinessError } = require('../business/business');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -160,6 +160,33 @@ const validateSignup = [
     .withMessage('Email is too long')
 ];
 
+// Validation middleware for contact form
+const validateContact = [
+  body('name')
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters')
+    .matches(/^[a-zA-Z\s\-'\.]+$/)
+    .withMessage('Name can only contain letters, spaces, hyphens, apostrophes, and periods')
+    .escape(),
+  body('email')
+    .isEmail()
+    .withMessage('Please enter a valid email address')
+    .normalizeEmail()
+    .isLength({ max: 254 })
+    .withMessage('Email is too long'),
+  body('subject')
+    .trim()
+    .isLength({ min: 3, max: 100 })
+    .withMessage('Subject must be between 3 and 100 characters')
+    .escape(),
+  body('message')
+    .trim()
+    .isLength({ min: 10, max: 1000 })
+    .withMessage('Message must be between 10 and 1000 characters')
+    .escape()
+];
+
 function handleValidationErrors(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -230,6 +257,42 @@ app.post('/join', signupLimiter, validateSignup, handleValidationErrors, async (
     }
     if (err.code === 11000) {
       return res.status(409).json({ error: 'Duplicate Entry', message: 'This email is already registered on our waitlist!' });
+    }
+    next(err);
+  }
+});
+
+// Handle preflight requests for /contact
+app.options('/contact', cors(corsOptions));
+
+// Contact form submission
+app.post('/contact', signupLimiter, validateContact, handleValidationErrors, async (req, res, next) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    const clientIP = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
+    const userAgent = req.get('User-Agent') || 'unknown';
+
+    const result = await addContactSubmission({ name, email, subject, message, ipAddress: clientIP, userAgent });
+
+    res.status(201).json({
+      success: true,
+      message: `Thank you ${result.entry.name}! We've received your message and will reply within 24 hours.`
+    });
+  } catch (err) {
+    if (err instanceof BusinessError) {
+      const statusMap = {
+        IP_RATE_LIMIT: 429,
+        INVALID_EMAIL: 400,
+        INVALID_NAME: 400,
+        INVALID_SUBJECT: 400,
+        INVALID_MESSAGE: 400
+      };
+      const status = statusMap[err.code] || 400;
+      return res.status(status).json({ error: err.message });
+    }
+    if (err.name === 'ValidationError') {
+      const errorMessages = Object.values(err.errors).map(v => v.message);
+      return res.status(400).json({ error: 'Validation Error', message: errorMessages.join('. ') });
     }
     next(err);
   }

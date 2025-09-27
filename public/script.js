@@ -584,28 +584,51 @@ const contactForm = document.getElementById("contactForm");
 if (contactForm) {
   contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+    
+    const name = document.getElementById("contactName").value.trim();
+    const email = document.getElementById("contactEmail").value.trim();
+    const subject = document.getElementById("contactSubject").value.trim();
+    const message = document.getElementById("contactMessage").value.trim();
     const responseDiv = document.getElementById("contactResponse");
     const submitBtn = this.querySelector('button[type="submit"]');
 
+    const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitBtn.disabled = true;
+    responseDiv.innerHTML = "";
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // simulate API
-      responseDiv.innerHTML = `
-        <div class="alert alert-success">
-          <i class="fas fa-check-circle"></i>
-          Thank you! We'll reply within 24h.
-        </div>`;
-      this.reset();
+      const response = await fetch("/contact", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ name, email, subject, message }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        responseDiv.innerHTML = `<div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            ${result.message}
+          </div>`;
+        this.reset();
+      } else {
+        responseDiv.innerHTML = `<div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            ${result.error || result.message || "Error. Try again."}
+          </div>`;
+      }
     } catch (err) {
-      responseDiv.innerHTML = `
-        <div class="alert alert-error">
+      console.error('Contact form error:', err);
+      responseDiv.innerHTML = `<div class="alert alert-error">
           <i class="fas fa-exclamation-circle"></i>
-          Error. Please try again.
+          Unable to send message. Please check your connection and try again.
         </div>`;
     } finally {
-      submitBtn.innerHTML = '<span>Send Message</span><i class="fas fa-paper-plane"></i>';
+      submitBtn.innerHTML = originalText;
       submitBtn.disabled = false;
       responseDiv.style.display = "block";
     }
@@ -651,13 +674,14 @@ if (waitlistForm) {
       } else {
         responseDiv.innerHTML = `<div class="alert alert-error">
             <i class="fas fa-exclamation-circle"></i>
-            ${result.message || "Error. Try again."}
+            ${result.error || result.message || "Error. Try again."}
           </div>`;
       }
     } catch (err) {
+      console.error('Waitlist error:', err);
       responseDiv.innerHTML = `<div class="alert alert-error">
           <i class="fas fa-exclamation-circle"></i>
-          Connection error. Try again.
+          Unable to join waitlist. Please check your connection and try again.
         </div>`;
     } finally {
       submitBtn.innerHTML = originalText;
