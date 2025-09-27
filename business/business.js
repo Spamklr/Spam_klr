@@ -92,12 +92,25 @@ async function addContactSubmission({ name, email, subject, message, ipAddress =
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new BusinessError('Please enter a valid email address', 'INVALID_EMAIL');
   }
-  if (!subject || String(subject).trim().length < 3) {
-    throw new BusinessError('Subject must be at least 3 characters', 'INVALID_SUBJECT');
+  
+  // Convert dropdown values to readable subject
+  const subjectMap = {
+    'general': 'General Inquiry',
+    'support': 'Technical Support',
+    'business': 'Business Partnership',
+    'press': 'Press & Media',
+    'feedback': 'Feedback'
+  };
+  
+  if (!subject || !subjectMap[subject]) {
+    throw new BusinessError('Please select a valid subject', 'INVALID_SUBJECT');
   }
+  
   if (!message || String(message).trim().length < 10) {
     throw new BusinessError('Message must be at least 10 characters', 'INVALID_MESSAGE');
   }
+  
+  const readableSubject = subjectMap[subject];
 
   // per-IP throttle for contact form (default 5 per 24h)
   const ipLimit = parseInt(process.env.MAX_CONTACTS_PER_IP_24H, 10) || 5;
@@ -110,7 +123,7 @@ async function addContactSubmission({ name, email, subject, message, ipAddress =
     const entry = await insertContactEntry({
       name: name.trim(),
       email: email.toLowerCase().trim(),
-      subject: subject.trim(),
+      subject: readableSubject,
       message: message.trim(),
       ipAddress,
       userAgent

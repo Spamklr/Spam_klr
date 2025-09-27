@@ -177,8 +177,8 @@ const validateContact = [
     .withMessage('Email is too long'),
   body('subject')
     .trim()
-    .isLength({ min: 3, max: 100 })
-    .withMessage('Subject must be between 3 and 100 characters')
+    .isIn(['general', 'support', 'business', 'press', 'feedback'])
+    .withMessage('Please select a valid subject')
     .escape(),
   body('message')
     .trim()
@@ -190,6 +190,8 @@ const validateContact = [
 function handleValidationErrors(req, res, next) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('🚨 Validation errors:', errors.array());
+    console.log('📝 Request body:', req.body);
     const errorMessages = errors.array().map(e => e.msg);
     return res.status(400).json({
       error: 'Validation failed',
@@ -223,10 +225,12 @@ app.get('/health', (req, res) => {
 // Join waitlist
 app.post('/join', signupLimiter, validateSignup, handleValidationErrors, async (req, res, next) => {
   try {
+    console.log('📝 Waitlist join attempt:', req.body);
     const { name, email } = req.body;
     const clientIP = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
 
+    console.log('📍 Client info:', { clientIP, userAgent });
     const result = await addToWaitlist({ name, email, ipAddress: clientIP, userAgent });
 
     if (req.session) {
@@ -240,6 +244,7 @@ app.post('/join', signupLimiter, validateSignup, handleValidationErrors, async (
       waitlistPosition: result.position
     });
   } catch (err) {
+    console.error('❌ Waitlist error:', err);
     if (err instanceof BusinessError) {
       const statusMap = {
         WAITLIST_FULL: 429,
@@ -268,10 +273,12 @@ app.options('/contact', cors(corsOptions));
 // Contact form submission
 app.post('/contact', signupLimiter, validateContact, handleValidationErrors, async (req, res, next) => {
   try {
+    console.log('📧 Contact form submission:', req.body);
     const { name, email, subject, message } = req.body;
     const clientIP = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
     const userAgent = req.get('User-Agent') || 'unknown';
 
+    console.log('📍 Client info:', { clientIP, userAgent });
     const result = await addContactSubmission({ name, email, subject, message, ipAddress: clientIP, userAgent });
 
     res.status(201).json({
@@ -279,6 +286,7 @@ app.post('/contact', signupLimiter, validateContact, handleValidationErrors, asy
       message: `Thank you ${result.entry.name}! We've received your message and will reply within 24 hours.`
     });
   } catch (err) {
+    console.error('❌ Contact form error:', err);
     if (err instanceof BusinessError) {
       const statusMap = {
         IP_RATE_LIMIT: 429,
@@ -342,11 +350,15 @@ app.use(globalErrorHandler);
 // Bootstrap
 (async () => {
   try {
+    console.log('🚀 Starting SPAMKLR server...');
+    console.log('📋 Environment:', process.env.NODE_ENV || 'development');
+    
     await connectDB(process.env.MONGODB_URI);
+    
     const server = app.listen(PORT, '0.0.0.0', () => {
-      console.log(`✅ Connected to MongoDB`);
-      console.log(`🚀 ${process.env.APP_NAME || 'SPAMKLR'} running on http://0.0.0.0:${PORT}`);
+      console.log(`✅ ${process.env.APP_NAME || 'SPAMKLR'} running on http://0.0.0.0:${PORT}`);
       console.log(`📁 Serving public from: ${path.join(__dirname, '..', 'public')}`);
+      console.log(`🌐 CORS allowed origins: ${process.env.ALLOWED_ORIGINS || 'localhost:5000,localhost:8000'}`);
     });
 
     async function gracefulShutdown(signal) {

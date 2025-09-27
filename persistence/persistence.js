@@ -95,18 +95,25 @@ const Contact = mongoose.models.Contact || mongoose.model('Contact', ContactSche
  */
 async function connectDB(uri) {
   if (!uri) {
-    console.error('MONGODB_URI not provided');
+    console.error('❌ MONGODB_URI not provided');
     process.exit(1);
   }
   try {
+    console.log('🔄 Attempting to connect to MongoDB...');
     await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      serverSelectionTimeoutMS: 10000, // 10 second timeout
+      connectTimeoutMS: 10000,
+      maxPoolSize: 10,
+      retryWrites: true
     });
-    console.log('✅ Connected to MongoDB');
+    console.log('✅ Connected to MongoDB successfully');
+    return true;
   } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB connection error:', err.message);
+    if (err.name === 'MongoServerSelectionError') {
+      console.error('💡 Check if MongoDB is running and URI is correct');
+    }
+    throw err; // Don't exit, let the caller handle it
   }
 }
 

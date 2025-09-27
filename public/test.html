@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test SPAMKLR Forms</title>
+</head>
+<body>
+    <h2>Test Waitlist</h2>
+    <form id="testWaitlist">
+        <input type="text" id="testName" placeholder="Name" required>
+        <input type="email" id="testEmail" placeholder="Email" required>
+        <button type="submit">Join Waitlist</button>
+    </form>
+    <div id="waitlistResult"></div>
+
+    <h2>Test Contact</h2>
+    <form id="testContact">
+        <input type="text" id="testContactName" placeholder="Name" required>
+        <input type="email" id="testContactEmail" placeholder="Email" required>
+        <input type="text" id="testSubject" placeholder="Subject" required>
+        <textarea id="testMessage" placeholder="Message" required></textarea>
+        <button type="submit">Send Contact</button>
+    </form>
+    <div id="contactResult"></div>
+
+    <script>
+        // Test waitlist
+        document.getElementById('testWaitlist').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('testName').value;
+            const email = document.getElementById('testEmail').value;
+            
+            try {
+                const response = await fetch('/join', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                const result = await response.json();
+                document.getElementById('waitlistResult').innerHTML = JSON.stringify(result, null, 2);
+            } catch (err) {
+                document.getElementById('waitlistResult').innerHTML = 'Error: ' + err.message;
+            }
+        });
+
+        // Test contact
+        document.getElementById('testContact').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('testContactName').value;
+            const email = document.getElementById('testContactEmail').value;
+            const subject = document.getElementById('testSubject').value;
+            const message = document.getElementById('testMessage').value;
+            
+            try {
+                const response = await fetch('/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, subject, message })
+                });
+                const result = await response.json();
+                document.getElementById('contactResult').innerHTML = JSON.stringify(result, null, 2);
+            } catch (err) {
+                document.getElementById('contactResult').innerHTML = 'Error: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>

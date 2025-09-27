@@ -585,10 +585,24 @@ if (contactForm) {
   contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     
-    const name = document.getElementById("contactName").value.trim();
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const name = `${firstName} ${lastName}`.trim();
+    
+    // Validation
+    if (!firstName || !lastName) {
+      responseDiv.innerHTML = `<div class="alert alert-error">
+          <i class="fas fa-exclamation-circle"></i>
+          Please enter both first and last name.
+        </div>`;
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+      responseDiv.style.display = "block";
+      return;
+    }
     const email = document.getElementById("contactEmail").value.trim();
-    const subject = document.getElementById("contactSubject").value.trim();
-    const message = document.getElementById("contactMessage").value.trim();
+    const subject = document.getElementById("subject").value.trim();
+    const message = document.getElementById("message").value.trim();
     const responseDiv = document.getElementById("contactResponse");
     const submitBtn = this.querySelector('button[type="submit"]');
 
