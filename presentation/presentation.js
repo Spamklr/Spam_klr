@@ -213,13 +213,54 @@ app.get('/', async (req, res, next) => {
 });
 
 // Health check
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+app.get('/health', async (req, res) => {
+  try {
+    // Test database connection
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    
+    // Basic stats
+    let stats = null;
+    if (dbStatus === 'connected') {
+      try {
+        stats = await getWaitlistStats();
+      } catch (err) {
+        console.warn('Health check: Could not fetch stats', err.message);
+      }
+    }
+    
+    const health = {
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      database: {
+        status: dbStatus,
+        mongodb: mongoose.connection.host || 'unknown'
+      },
+      server: {
+        port: PORT,
+        nodeVersion: process.version,
+        platform: process.platform
+      }
+    };
+    
+    if (stats) {
+      health.stats = {
+        waitlistTotal: stats.totalSignups,
+        waitlistRecent24h: stats.recentSignups24h
+      };
+    }
+    
+    res.status(200).json(health);
+  } catch (err) {
+    console.error('Health check error:', err);
+    res.status(503).json({
+      status: 'ERROR',
+      timestamp: new Date().toISOString(),
+      error: 'Health check failed',
+      details: process.env.NODE_ENV !== 'production' ? err.message : undefined
+    });
+  }
 });
 
 // Join waitlist
@@ -323,7 +364,18 @@ app.use('/api', (req, res) => {
 
 // Global error handler
 function globalErrorHandler(err, req, res, next) {
-  console.error('Error:', err);
+  const timestamp = new Date().toISOString();
+  const method = req.method;
+  const url = req.url;
+  const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+  
+  console.error(`[${timestamp}] ❌ ${method} ${url} - IP: ${ip}`);
+  console.error('Error details:', {
+    name: err.name,
+    message: err.message,
+    code: err.code,
+    stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+  });
 
   if (err.name === 'ValidationError') {
     const errorMessages = Object.values(err.errors).map(val => val.message);
@@ -333,11 +385,19 @@ function globalErrorHandler(err, req, res, next) {
     return res.status(409).json({ error: 'Duplicate Entry', message: 'This email is already registered on our waitlist!' });
   }
   if (err.message === 'Not allowed by CORS') {
+    console.error(`🚫 CORS blocked origin: ${req.get('Origin') || 'unknown'}`);
     return res.status(403).json({ error: 'Access Denied', message: 'Request not allowed by CORS policy' });
   }
   if (err.status === 429) {
     return res.status(429).json({ error: 'Too Many Requests', message: 'Please slow down and try again later' });
   }
+  
+  // MongoDB connection errors
+  if (err.name === 'MongooseServerSelectionError' || err.name === 'MongoServerError') {
+    console.error('🔴 Database connection error - check MongoDB URI and network');
+    return res.status(503).json({ error: 'Service Unavailable', message: 'Database connection error. Please try again later.' });
+  }
+  
   res.status(500).json({
     error: 'Server Error',
     message: process.env.NODE_ENV === 'production'
@@ -347,11 +407,40 @@ function globalErrorHandler(err, req, res, next) {
 }
 app.use(globalErrorHandler);
 
+// Environment validation
+function validateEnvironment() {
+  const required = ['MONGODB_URI'];
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing required environment variables:', missing);
+    console.error('💡 Create .env file with required variables');
+    return false;
+  }
+  
+  // Warnings for recommended variables
+  const recommended = ['SESSION_SECRET', 'ALLOWED_ORIGINS'];
+  const missingRecommended = recommended.filter(key => !process.env[key]);
+  
+  if (missingRecommended.length > 0) {
+    console.warn('⚠️  Missing recommended environment variables:', missingRecommended);
+    console.warn('💡 Add these to .env file for better security');
+  }
+  
+  return true;
+}
+
 // Bootstrap
 (async () => {
   try {
     console.log('🚀 Starting SPAMKLR server...');
     console.log('📋 Environment:', process.env.NODE_ENV || 'development');
+    
+    // Validate environment
+    if (!validateEnvironment()) {
+      console.error('❌ Environment validation failed');
+      process.exit(1);
+    }
     
     await connectDB(process.env.MONGODB_URI);
     

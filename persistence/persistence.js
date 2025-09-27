@@ -138,7 +138,7 @@ async function countWaitlist() {
 }
 
 /**
- * Count entries from a specific IP within the last `sinceMs` milliseconds.
+ * Count entries from a specific IP within the last sinceMs milliseconds.
  */
 async function countRecentByIP(ipAddress, sinceMs = 24 * 60 * 60 * 1000) {
   return Waitlist.countDocuments({
@@ -181,7 +181,7 @@ async function insertContactEntry({ name, email, subject, message, ipAddress, us
 }
 
 /**
- * Count contact entries from a specific IP within the last `sinceMs` milliseconds.
+ * Count contact entries from a specific IP within the last sinceMs milliseconds.
  */
 async function countContactsByIP(ipAddress, sinceMs = 24 * 60 * 60 * 1000) {
   return Contact.countDocuments({
