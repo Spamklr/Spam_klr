@@ -47,16 +47,26 @@ app.use(helmet({
   }
 }));
 
-// General rate limiter
+// General rate limiter (disabled for development)
 const generalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100,
+  max: process.env.NODE_ENV === 'production' 
+    ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS, 10) || 100
+    : 1000, // Much higher limit for development
   message: {
     error: "Too many requests from this IP, please try again later.",
     retryAfter: "15 minutes"
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: (req) => {
+    // Skip rate limiting for localhost in development
+    if (process.env.NODE_ENV !== 'production') {
+      const ip = req.ip || req.connection?.remoteAddress || '';
+      return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
+    }
+    return false;
+  }
 });
 app.use(generalLimiter);
 
@@ -131,16 +141,26 @@ app.use(session({
 // Serve static assets
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Route-level signup limiter
+// Route-level signup limiter (relaxed for development)
 const signupLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_SIGNUP_REQUESTS, 10) || 5,
+  max: process.env.NODE_ENV === 'production' 
+    ? parseInt(process.env.RATE_LIMIT_MAX_SIGNUP_REQUESTS, 10) || 5
+    : 100, // Much higher limit for development testing
   message: {
     error: "Too many signup attempts, please try again later.",
     retryAfter: "15 minutes"
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  skip: (req) => {
+    // Skip rate limiting for localhost in development
+    if (process.env.NODE_ENV !== 'production') {
+      const ip = req.ip || req.connection?.remoteAddress || '';
+      return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
+    }
+    return false;
+  }
 });
 
 // Validation middleware for signup
