@@ -26,14 +26,15 @@
 # # CORS Settings
 # ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5000,https://yourdomain.com
 
+MONGODB_URI=mongodb+srv://Admin:V0zkpw036jsSmhx3@cluster0.aqcn3nh.mongodb.net/SpamKlrDB
+DB_NAME=SpamKlrDB
 
-MONGODB_URI=mongodb+srv://Admin:V0zkpw036jsSmhx3@cluster0.aqcn3nh.mongodb.net/
 SESSION_SECRET=1f3a3cc68e013f9168505981daabf6cae2fe46cd2be79726645ac7f9a7c56d8b9a1037f6f5b5e9aea2822d90c8dc54e3e3c79d3eedcf36e087bf0a0d929966f6
 MAX_WAITLIST_ENTRIES=10000
 MAX_SIGNUPS_PER_IP_24H=3
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 RATE_LIMIT_MAX_SIGNUP_REQUESTS=5
-ALLOWED_ORIGINS=http://localhost:5000
-NODE_ENV=development
+ALLOWED_ORIGINS=https://spamklr.com,https://www.spamklr.com
+NODE_ENV=production
 APP_NAME=SPAMKLR
