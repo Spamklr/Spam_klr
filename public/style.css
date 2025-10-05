@@ -239,8 +239,9 @@ img {
     display: none;
     background: none;
     border: none;
-    color: var(--white);
-    font-size: var(--font-size-xl);
+    color: var(--primary-blue);
+    /* font-size: var(--font-size-xl); */
+    font-size: 2.35rem;
     cursor: pointer;
 }
 
@@ -347,6 +348,10 @@ img {
     -webkit-text-fill-color: transparent;
     text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
     line-height: 1.1;
+}
+
+.hero h1 span {
+    font-size: 2.2rem;
 }
 
 .hero p {
@@ -2750,7 +2755,8 @@ img {
         top: 100%;
         left: 0;
         width: 100%;
-        background: var(--primary-dark);
+        background: white;
+        box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.3);
         flex-direction: column;
         gap: 0;
         transform: translateY(-100%);
