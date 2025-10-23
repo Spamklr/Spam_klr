@@ -9,7 +9,8 @@
                 <div class="contact-card">
                     <div class="contact-icon"><i class="fas fa-envelope"></i></div>
                     <h3>Email Us</h3>
-                    <p>spamklr@spamklr.com</p>
+                    {{!-- <p>spamklr.qa@gmail.com</p> --}}
+                    <p><a href="mailto:spamklr.qa@gmail.com">spamklr.qa@gmail.com</a></p>
                     {{!-- <a href="mailto:support@spamklr.com" class="contact-link">Send Email</a> --}}
                 </div>
                 {{!-- <div class="contact-card">
@@ -21,7 +22,11 @@
                 <div class="contact-card">
                     <div class="contact-icon"><i class="fas fa-phone"></i></div>
                     <h3>Call Us</h3>
-                    <p>+974 SPAM-KLR</p>
+                    {{!-- <p>+974 72073971</p> --}}
+                    {{!-- <p><a href="tel:+97472073971">+974 72073971</a></p> --}}
+                    <p>
+                        <a href="#" id="smartPhoneLink">+974 72073971</a>
+                    </p>
                     {{!-- <a href="tel:+15557726557" class="contact-link">Call Now</a> --}}
                 </div>
             </div>
@@ -66,3 +71,26 @@
         </div>
     </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const phoneLink = document.getElementById('smartPhoneLink');
+    const phoneNumber = '+97472073971';
+    const whatsappNumber = '97472073971'; // without +
+
+    phoneLink.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      // Detect if the user is on a mobile device
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // Open WhatsApp chat on mobile
+        window.open(`https://wa.me/${whatsappNumber}`, '_blank');
+      } else {
+        // Open the phone dialer on desktop
+        window.location.href = `tel:${phoneNumber}`;
+      }
+    });
+  });
+</script>

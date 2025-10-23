@@ -3057,4 +3057,33 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent !important;
 }
+/* .contact-card a {
+  color: inherit;
+  text-decoration: none;
+}
+.contact-card a:hover {
+  text-decoration: underline;
+} */
+.contact-card a {
+  color: inherit;
+  text-decoration: none;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
 
+.contact-card a:hover {
+  background-color: rgba(30, 64, 175, 0.1);
+  color: var(--primary-blue);
+}
+/* .contact-card a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact-card a:hover {
+  color: var(--primary-blue);
+  text-shadow: 0 0 8px rgba(30, 64, 175, 0.6);
+}
+ */
